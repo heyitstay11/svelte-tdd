@@ -76,27 +76,7 @@ describe("Sign Up Page", () => {
 describe("Interactions", () => {
   //
 
-  it("enable the button when password and confirm password match", async () => {
-    render(SignUp);
-    const password = screen.getByLabelText("Password");
-    const confirm_password = screen.getByLabelText("Confirm Password");
-    await userEvent.type(password, "Secret");
-    await userEvent.type(confirm_password, "Secret");
-    const button = screen.getByRole("button", { name: "Sign Up" });
-    expect(button).toBeEnabled();
-  });
-
-  it("posts username, email and password after submit", async () => {
-    let reqBody;
-    const server = setupServer(
-      rest.post("/api/users", (req, res, ctx) => {
-        reqBody = req.body;
-        return res(ctx.status(200));
-      })
-    );
-
-    server.listen();
-
+  const setUpInteractions = async () => {
     render(SignUp);
     const username = screen.getByLabelText("Username");
     const email = screen.getByLabelText("Email");
@@ -107,16 +87,106 @@ describe("Interactions", () => {
     await userEvent.type(email, "john@mail.com");
     await userEvent.type(password, "Secret");
     await userEvent.type(confirm_password, "Secret");
+  };
+
+  it("enable the button when password and confirm password match", async () => {
+    await setUpInteractions();
+    const button = screen.getByRole("button", { name: "Sign Up" });
+    expect(button).toBeEnabled();
+  });
+
+  it("posts username, email and password after submit", async () => {
+    let reqBody;
+    const server = setupServer(
+      rest.post("/api/1.0/users", (req, res, ctx) => {
+        reqBody = req.body;
+        return res(ctx.status(200));
+      })
+    );
+
+    server.listen();
+
+    await setUpInteractions();
 
     const button = screen.getByRole("button", { name: "Sign Up" });
     await userEvent.click(button);
 
-    console.error(reqBody);
+    server.close();
+
     expect(reqBody).toEqual({
       email: "john@mail.com",
       password: "Secret",
       username: "John",
     });
+  });
+
+  it("disable button while processing", async () => {
+    let counter = 0;
+    const server = setupServer(
+      rest.post("/api/1.0/users", (req, res, ctx) => {
+        counter++;
+        return res(ctx.status(200));
+      })
+    );
+
+    server.listen();
+
+    await setUpInteractions();
+
+    const button = screen.getByRole("button", { name: "Sign Up" });
+    await userEvent.click(button);
+    await userEvent.click(button);
+
+    server.close();
+
+    expect(counter).toBe(1);
+  });
+
+  it("does'nt display loading spinner initially", async () => {
+    await setUpInteractions();
+
+    const loader = screen.queryByRole("status");
+
+    expect(loader).not.toBeInTheDocument();
+  });
+
+  it("display loading spinner while processing", async () => {
+    const server = setupServer(
+      rest.post("/api/1.0/users", (req, res, ctx) => {
+        return res(ctx.status(200));
+      })
+    );
+
+    server.listen();
+
+    await setUpInteractions();
+
+    const button = screen.getByRole("button", { name: "Sign Up" });
+    await userEvent.click(button);
+    const loader = screen.getByRole("status");
+
+    server.close();
+    expect(loader).toBeInTheDocument();
+  });
+
+  it("display account acivation after success request", async () => {
+    const server = setupServer(
+      rest.post("/api/1.0/users", (req, res, ctx) => {
+        return res(ctx.status(200));
+      })
+    );
+    server.listen();
+
+    await setUpInteractions();
+
+    const button = screen.getByRole("button", { name: "Sign Up" });
+    await userEvent.click(button);
+
+    server.close();
+
+    const text = await screen.findByText("Check account for activation id");
+
+    expect(text).toBeInTheDocument();
   });
 
   //

@@ -2,3 +2,8 @@
 /public/build/
 
 .DS_Store
+
+node_modules
+*.sqlite
+uploads-*
+*.log
