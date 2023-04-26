@@ -189,5 +189,40 @@ describe("Interactions", () => {
     expect(text).toBeInTheDocument();
   });
 
+  it("displays validation error for username", async () => {
+    const server = setupServer(
+      rest.post("/api/1.0/users", (req, res, ctx) => {
+        return res(
+          ctx.status(400),
+          ctx.json({
+            validationErrors: {
+              username: "Username cannot be empty",
+            },
+          })
+        );
+      })
+    );
+    server.listen();
+    await setUpInteractions();
+
+    const button = screen.getByRole("button", { name: "Sign Up" });
+    await userEvent.click(button);
+
+    server.close();
+    const error = await screen.findByText("Username cannot be empty");
+
+    expect(error).toBeInTheDocument();
+  });
+
+  it("Initially, doesnt displays validation error for username", async () => {
+    await setUpInteractions();
+
+    const error = await screen.queryByRole("alert", {
+      name: "Username cannot be empty",
+    });
+
+    expect(error).not.toBeInTheDocument();
+  });
+
   //
 });

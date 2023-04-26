@@ -1,9 +1,11 @@
 <script>
     import axios from 'axios'
+    import Input from '../components/Input.svelte';
     let disabled = true;
     let username, email, password, confirmPassword;
     let isLoading;
     let success;
+    let errors = {}
 
     const onSubmit = async () => {
         disabled = true;
@@ -14,7 +16,9 @@
             });
             if(status == 200) success = true;
         } catch (error) {
-            console.log(error);
+            if(error.response.status === 400){
+                errors = error.response.data.validationErrors;
+            }
         }
     }
     
@@ -28,10 +32,7 @@
             <h1 class="text-center">Sign Up</h1>
         </div>
         <div class="card-body">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input class="form-control" type="text" id="username" name="username" bind:value={username}>
-            </div>
+            <Input value={username} />
             <div class="form-group">
                 <label for="email">Email</label>
                 <input class="form-control" type="email" id="email" name="email" bind:value={email}>
