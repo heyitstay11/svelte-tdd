@@ -1,5 +1,5 @@
 <script>
-    export let label, id, value, help;
+    export let label, id, value = '', help;
 </script>
 
 <div class="form-group">

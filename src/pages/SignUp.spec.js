@@ -164,8 +164,8 @@ describe("Interactions", () => {
     const button = screen.getByRole("button", { name: "Sign Up" });
     await userEvent.click(button);
     const loader = screen.getByRole("status");
-
     server.close();
+
     expect(loader).toBeInTheDocument();
   });
 
