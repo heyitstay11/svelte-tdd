@@ -189,14 +189,14 @@ describe("Interactions", () => {
     expect(text).toBeInTheDocument();
   });
 
-  it("displays validation error for username", async () => {
+  it("displays validation error for email", async () => {
     const server = setupServer(
       rest.post("/api/1.0/users", (req, res, ctx) => {
         return res(
           ctx.status(400),
           ctx.json({
             validationErrors: {
-              username: "Username cannot be empty",
+              username: "email cannot be empty",
             },
           })
         );
@@ -209,7 +209,7 @@ describe("Interactions", () => {
     await userEvent.click(button);
 
     server.close();
-    const error = await screen.findByText("Username cannot be empty");
+    const error = await screen.findByText("Email cannot be empty");
 
     expect(error).toBeInTheDocument();
   });
@@ -218,7 +218,7 @@ describe("Interactions", () => {
     await setUpInteractions();
 
     const error = await screen.queryByRole("alert", {
-      name: "Username cannot be empty",
+      name: "Email cannot be empty",
     });
 
     expect(error).not.toBeInTheDocument();

@@ -23,7 +23,21 @@
             }
         }
     }
-    
+    $: {
+        if(username){
+            errors.username = null
+        }
+    }
+    $: {
+        if(email){
+            errors.email = null
+        }
+    }
+    $: {
+        if(password){
+            errors.password = null
+        }
+    }
     $: disabled = (password && confirmPassword) ? password !== confirmPassword : true;
 </script>
 
@@ -34,10 +48,10 @@
             <h1 class="text-center">Sign Up</h1>
         </div>
         <div class="card-body">
-            <Input bind:value={username} id={"username"} label={"Username"} help={errors.username} />
-            <Input bind:value={email} id={"email"} label={"Email"} help={errors.email} />
-            <Input bind:value={password} id={"password"} label={"Password"} help={errors.password} />
-            <Input bind:value={confirmPassword} id={"confirm-password"} label={"Confirm Password"} help={errors.confirmPassword} />
+            <Input bind:value={username}  id={"username"} label={"Username"} help={errors.username} />
+            <Input bind:value={email} type={"email"} id={"email"} label={"Email"} help={errors.email} />
+            <Input bind:value={password} type={"password"} id={"password"} label={"Password"} help={errors.password} />
+            <Input bind:value={confirmPassword} type={"password"} id={"confirm-password"} label={"Confirm Password"} help={errors.confirmPassword} />
             <div class="text-center">
                 <button class="btn btn-primary" {disabled} >
                     {#if isLoading}
