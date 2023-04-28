@@ -1,9 +1,13 @@
-import SignUp from "./SignUp.svelte";
-import { render, screen } from "@testing-library/svelte";
 import "@testing-library/jest-dom";
+import { render, screen } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
+import SignUp from "./SignUp.svelte";
+import LanguageSelector from "../components/LanguageSelector.svelte";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
+import "../../locale/i18n";
+import en from "../../locale/en.json";
+import tr from "../../locale/tr.json";
 
 describe("Sign Up Page", () => {
   //
@@ -70,8 +74,6 @@ describe("Sign Up Page", () => {
 
   //
 });
-
-//
 
 describe("Interactions", () => {
   //
@@ -225,4 +227,61 @@ describe("Interactions", () => {
   });
 
   //
+});
+
+describe("Internationalization", () => {
+  it("default language english", () => {
+    render(SignUp);
+    render(LanguageSelector);
+    expect(
+      screen.queryByRole("heading", { name: en.signUp })
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByRole("button", { name: en.signUp })
+    ).toBeInTheDocument();
+
+    expect(screen.queryByLabelText(en.username)).toBeInTheDocument();
+    expect(screen.queryByLabelText(en.email)).toBeInTheDocument();
+    expect(screen.queryByLabelText(en.password)).toBeInTheDocument();
+    expect(screen.queryByLabelText(en.passwordRepeat)).toBeInTheDocument();
+  });
+
+  it("showing turkish when switched", async () => {
+    render(SignUp);
+    render(LanguageSelector);
+    const toggler = screen.getByTitle("Turkish");
+    await userEvent.click(toggler);
+    expect(
+      screen.queryByRole("heading", { name: tr.signUp })
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByRole("button", { name: tr.signUp })
+    ).toBeInTheDocument();
+
+    expect(screen.queryByLabelText(tr.username)).toBeInTheDocument();
+    expect(screen.queryByLabelText(tr.email)).toBeInTheDocument();
+    expect(screen.queryByLabelText(tr.password)).toBeInTheDocument();
+    expect(screen.queryByLabelText(tr.passwordRepeat)).toBeInTheDocument();
+  });
+
+  it("showing english when switched", async () => {
+    render(SignUp);
+    render(LanguageSelector);
+    const toggler = screen.getByTitle("English");
+    await userEvent.click(toggler);
+    expect(
+      screen.queryByRole("heading", { name: en.signUp })
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByRole("button", { name: en.signUp })
+    ).toBeInTheDocument();
+
+    expect(screen.queryByLabelText(en.username)).toBeInTheDocument();
+    expect(screen.queryByLabelText(en.email)).toBeInTheDocument();
+    expect(screen.queryByLabelText(en.password)).toBeInTheDocument();
+    expect(screen.queryByLabelText(en.passwordRepeat)).toBeInTheDocument();
+  });
 });
