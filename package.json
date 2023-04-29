@@ -34,12 +34,16 @@
     "jest-environment-jsdom": "^29.5.0",
     "jsdom": "^21.1.1",
     "sirv-cli": "^2.0.0",
-    "svelte-i18n": "^3.6.0"
+    "svelte-i18n": "^3.6.0",
+    "svelte-routing": "^1.6.0"
   },
   "jest": {
     "transform": {
       "^.+\\.svelte$": "svelte-jester",
       "^.+\\.js$": "babel-jest"
-    }
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(svelte-routing)/)"
+    ]
   }
 }

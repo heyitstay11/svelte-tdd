@@ -1,8 +1,7 @@
 <script>
     import axios from 'axios'
     import Input from '../components/Input.svelte';
-    import LanguageSelector from '../components/LanguageSelector.svelte';
-    import { _ ,} from 'svelte-i18n'
+    import { _ } from 'svelte-i18n'
     let disabled = true;
     let username, email, password, confirmPassword;
     let isLoading;
@@ -43,7 +42,7 @@
     $: disabled = (password && confirmPassword) ? password !== confirmPassword : true;
 </script>
 
-<main class="container col-lg-6">
+<main data-test-id="signup-page" class="container col-lg-6">
 
     <form class="card mt-5" on:submit|preventDefault={onSubmit}>
         <div class="card-header">
@@ -67,6 +66,6 @@
     {#if success}
         <div class="alert alert-success">Check account for activation id</div>
     {/if}
-    <LanguageSelector />
+    
    </main>
 

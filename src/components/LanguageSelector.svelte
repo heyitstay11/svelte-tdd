@@ -8,6 +8,6 @@
 </script>
 
 <div>
-    <button title="Turkish" on:click={onLanguageChange("tr")}>TR</button>
-    <button title="English" on:click={onLanguageChange("en")}>EN</button>
+    <button title="Turkish" on:click={() => onLanguageChange("tr")}>TR</button>
+    <button title="English" on:click={() => onLanguageChange("en")}>EN</button>
 </div>
